@@ -20,4 +20,6 @@ Useful for password cracking or fuzzing Danish targets.
 
 
 ### Credits:
+
+- [Area numbers in Denmark](https://telefon.qvotrup.dk/omraadenumre-i-danmark/) by [Verner Qvotrup](https://www.qvotrup.dk/) (love this guy)
 - [picker](https://github.com/pp19dd/picker/) by [Dino Beslagic](https://github.com/pp19dd)
