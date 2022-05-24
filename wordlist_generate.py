@@ -79,13 +79,14 @@ for opt in opts:
             total_count += 1000000
 
 
-total_pbar = tqdm(total=total_count, position=1)
+bar_format = "{desc}: {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} [{remaining}"
+total_pbar = tqdm(total=total_count, position=1, bar_format=bar_format)
 total_pbar.set_description("Total progress")
 total_pbar.update(0)
 
 
 for r in ranges:
-    pbar = tqdm(position=0, leave=False)
+    pbar = tqdm(position=0, leave=False, bar_format=bar_format)
 
     for prefix in r:
         range_start = r[0]
@@ -94,11 +95,11 @@ for r in ranges:
         if len(r) > 1:
             is_range = True
             pbar.set_description(
-                f"Outputting numbers with prefixes {range_start}-{range_stop}"
+                f"Outputting numbers w. prefixes {range_start}-{range_stop}"
             )
         else:
             is_range = False
-            pbar.set_description(f"Outputting numbers with prefix {range_start}")
+            pbar.set_description(f"Outputting numbers w. prefix {range_start}")
 
         with open(outfile_path, "a+") as outfile:
             if prefix >= 99:
