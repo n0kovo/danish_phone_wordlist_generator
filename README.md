@@ -1,6 +1,9 @@
 ## Danish Phone Wordlist Generator
 
 This tool can generate wordlists of Danish phone numbers by area and/or usage (Mobile, landline etc.)
+Useful for password cracking or fuzzing Danish targets.
+
+(See also my [Danish Wordlists](https://github.com/narkopolo/danish-wordlists) repo for a collection of Danish general-purpose wordlists.)
 
 ### Getting started:
 
