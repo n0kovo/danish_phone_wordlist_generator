@@ -1,9 +1,16 @@
 from picker import *
 from sys import exit
 from tqdm import tqdm
+from tqdm.auto import trange
+from os.path import normpath
+import re
 
 
-outfile_path = input("Output file: ")
+outfile_path = normpath(input("Output file: "))
+if bool(re.search(r"[^A-Za-z0-9_\-\\\.]", outfile_path)):
+    print("Invalid output file or path specified!")
+    exit()
+
 
 opts = Picker(
     title="Select number ranges to include:",
@@ -48,38 +55,63 @@ if opts == False:
     print("Aborted!")
     exit()
 
+ranges = []
 
+total_count = 0
 for opt in opts:
     opt = opt.split(" - ")[0].replace(" ", "")
-
     if "-" in opt:
         is_range = True
-        rangestart, rangestop = opt.split("-")
-        rangestart = int(rangestart)
-        rangestop = int(rangestop)
+        range_start = int(opt.split("-")[0])
+        range_stop = int(opt.split("-")[1]) + 1
+
     else:
         is_range = False
-        rangestart = int(opt)
-        rangestop = rangestart
+        range_start = int(opt)
+        range_stop = range_start + 1
 
-    pbar = tqdm()
-    for prefix in range(rangestart, rangestop + 1):
-        if is_range:
+    ranges.append(range(range_start, range_stop))
+
+    for prefix in range(range_start, range_stop):
+        if prefix >= 99:
+            total_count += 100000
+        else:
+            total_count += 1000000
+
+
+total_pbar = tqdm(total=total_count, position=1)
+total_pbar.set_description("Total progress")
+total_pbar.update(0)
+
+
+for r in ranges:
+    pbar = tqdm(position=0, leave=False)
+
+    for prefix in r:
+        range_start = r[0]
+        range_stop = r[-1]
+
+        if len(r) > 1:
+            is_range = True
             pbar.set_description(
-                f"Outputting numbers with prefixes {rangestart}-{rangestop}"
+                f"Outputting numbers with prefixes {range_start}-{range_stop}"
             )
         else:
-            pbar.set_description(f"Outputting numbers with prefix {rangestart}")
+            is_range = False
+            pbar.set_description(f"Outputting numbers with prefix {range_start}")
 
         with open(outfile_path, "a+") as outfile:
             if prefix >= 99:
-                pbar.total = len(range(0, 100000)) * (rangestop - rangestart + 1)
-                for i in range(0, 100000):
+                total = 100000
+                pbar.total = total * len(r)
+                for i in range(0, total):
                     outfile.write(f"{prefix}{i:05d}\n")
+                    total_pbar.update()
                     pbar.update()
-
             else:
-                for i in range(0, 1000000):
-                    pbar.total = len(range(0, 1000000)) * (rangestop - rangestart + 1)
+                total = 1000000
+                for i in range(0, total):
+                    pbar.total = total * len(r)
                     outfile.write(f"{prefix}{i:06d}\n")
+                    total_pbar.update()
                     pbar.update()
